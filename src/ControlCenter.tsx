@@ -1,16 +1,13 @@
-import {Component, createResource, createSignal, For, JSX} from "solid-js"
+import {Component, createSignal, For, JSX} from "solid-js"
 import CaveLocationPointsSVG from "./cave-location-points.svg"
 import Text from "./Text"
 import Paper from "./Paper"
 import {FaSolidCircle, FaSolidClock, FaSolidLocationArrow, FaSolidServer} from "solid-icons/fa"
 import {HiSolidCloud} from "solid-icons/hi"
-import fetchLocationPoints, {
-	FetchLocationPointsData,
-	LocationPoint,
-} from "./fetchers/fetch-location-points"
 import subDays from "date-fns/subDays"
 import {format} from "date-fns"
 import RelayStatus from "./RelayStatus"
+import useLocationPoints, {LocationPoint} from "./effects/use-location-points"
 
 export interface ControlCenterProps {
 	nostrRelays: string[]
@@ -20,24 +17,19 @@ export interface ControlCenterProps {
 }
 
 const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps): JSX.Element => {
-	const [locationPoints] = createResource(
-		{
-			relays: props.nostrRelays,
-			pgpPrivateViewKey: props.pgpViewPrivateKey,
-			pgpPublicSignKey: props.pgpSignPublicKey,
-			startDate: subDays(new Date(), 7),
-			nostrPublicKey: props.nostrPublicKey,
-		} as FetchLocationPointsData,
-		fetchLocationPoints,
-		{
-			initialValue: [],
-		},
-	)
+	const locationPoints = useLocationPoints({
+		relays: props.nostrRelays,
+		pgpPrivateViewKey: props.pgpViewPrivateKey,
+		pgpPublicSignKey: props.pgpSignPublicKey,
+		startDate: subDays(new Date(), 7),
+		nostrPublicKey: props.nostrPublicKey,
+	})
 	const [showGradient, setShowGradient] = createSignal<boolean>(true)
 
 	return (
 		<div class="relative">
 			<img
+				alt=""
 				src={CaveLocationPointsSVG}
 				class="h-screen right-0 top-0 bottom-0 absolute object-cover z-0"
 				style={{
@@ -59,7 +51,7 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 					</div>
 					<div>
 						<Paper title="Relays" icon={FaSolidServer}>
-							<For each={props.nostrRelays}>
+							<For<string[]> each={props.nostrRelays}>
 								{relay => <RelayStatus url={relay} />}
 							</For>
 						</Paper>

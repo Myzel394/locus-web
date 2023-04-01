@@ -10,6 +10,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/lodash": "^4.14.192",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.37.0",
     "eslint-config-prettier": "^8.8.0",
@@ -22,6 +23,7 @@
   },
   "dependencies": {
     "date-fns": "^2.29.3",
+    "lodash": "^4.17.21",
     "nostr-tools": "^1.8.1",
     "openpgp": "^5.7.0",
     "solid-icons": "^1.0.4",

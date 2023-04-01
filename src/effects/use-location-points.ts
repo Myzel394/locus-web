@@ -1,7 +1,10 @@
-import {SimplePool} from "nostr-tools"
+import {createEffect, createSignal} from "solid-js"
 import * as OpenPGP from "openpgp"
+import {SimplePool} from "nostr-tools"
+import sortBy from "lodash/sortBy"
+import reverse from "lodash/reverse"
 
-export interface FetchLocationPointsData {
+export interface UseLocationPointsData {
 	nostrPublicKey: string
 	pgpPrivateViewKey: string
 	pgpPublicSignKey: string
@@ -21,18 +24,25 @@ export interface LocationPoint {
 	headingAccuracy?: number
 }
 
-export default function fetchLocationPoints({
+export default function useLocationPoints({
 	nostrPublicKey,
 	pgpPrivateViewKey: rawPGPPrivateViewKey,
 	pgpPublicSignKey: rawPGPPublicSignKey,
 	relays,
 	startDate,
-}: FetchLocationPointsData): Promise<LocationPoint[]> {
-	return new Promise(async resolve => {
+}: UseLocationPointsData): () => LocationPoint[] {
+	let isAddingEvent = false
+	let areEventsDone = false
+	const [points, setPoints] = createSignal<LocationPoint[]>([])
+
+	const fixPoints = () => {
+		setPoints(reverse(sortBy(points(), ["createdAt"])))
+	}
+
+	createEffect(async () => {
 		const pgpPrivateViewKey = await OpenPGP.readPrivateKey({armoredKey: rawPGPPrivateViewKey})
 		const pgpPublicSignKey = await OpenPGP.readKey({armoredKey: rawPGPPublicSignKey})
 
-		const _events = []
 		const pool = new SimplePool()
 
 		const subscription = pool.sub(relays, [
@@ -44,6 +54,8 @@ export default function fetchLocationPoints({
 		])
 
 		subscription.on("event", async rawEvent => {
+			isAddingEvent = true
+
 			const {data: decryptedData} = await OpenPGP.decrypt({
 				message: await OpenPGP.readMessage({armoredMessage: rawEvent.content}),
 				decryptionKeys: pgpPrivateViewKey,
@@ -71,19 +83,37 @@ export default function fetchLocationPoints({
 
 			const locationPoint = JSON.parse(message.message)
 
-			console.log("event", locationPoint)
-			_events.push({
-				...locationPoint,
-				createdAt: new Date(locationPoint.createdAt),
-			})
+			setPoints([
+				...points(),
+				{
+					...locationPoint,
+					createdAt: new Date(locationPoint.createdAt),
+				},
+			])
+
+			isAddingEvent = false
+
+			if (areEventsDone) {
+				fixPoints()
+			}
 		})
 
-		// This might be called before "event" is done, we need to wait for it to finish
 		subscription.on("eose", () => {
-			console.log("eose", _events)
-			resolve(_events)
+			areEventsDone = true
 
 			pool.close(relays)
+
+			// This might be called before "event" is done, so in this case we don't want to fix the points yet,
+			// this will be done when "event" is done instead.
+			if (!isAddingEvent) {
+				fixPoints()
+			}
 		})
-	})
+
+		return () => {
+			pool.close(relays)
+		}
+	}, [nostrPublicKey, rawPGPPrivateViewKey, rawPGPPublicSignKey, relays, startDate])
+
+	return points
 }

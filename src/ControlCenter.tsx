@@ -1,4 +1,4 @@
-import {Component, createSignal, For, JSX} from "solid-js"
+import {Component, createSignal, For, JSX, Show} from "solid-js"
 import CaveLocationPointsSVG from "./cave-location-points.svg"
 import Text from "./Text"
 import Paper from "./Paper"
@@ -8,6 +8,7 @@ import subDays from "date-fns/subDays"
 import {format} from "date-fns"
 import RelayStatus from "./RelayStatus"
 import useLocationPoints, {LocationPoint} from "./effects/use-location-points"
+import HFetchLocationAddress from "./HFetchLocationAddress"
 
 export interface ControlCenterProps {
 	nostrRelays: string[]
@@ -41,7 +42,18 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 				<section class="basis-3/12 w-full ml-6 flex flex-col gap-y-12 justify-center items-stretch">
 					<div>
 						<Paper title="Location" icon={FaSolidLocationArrow}>
-							<Text variant="body">Secondary Street 5, San Seattle, USA</Text>
+							<Show<boolean> when={locationPoints().length > 0}>
+								<HFetchLocationAddress
+									longitude={
+										locationPoints()[locationPoints().length - 1].longitude
+									}
+									latitude={
+										locationPoints()[locationPoints().length - 1].latitude
+									}
+								>
+									{address => <Text variant="body">{address()}</Text>}
+								</HFetchLocationAddress>
+							</Show>
 						</Paper>
 					</div>
 					<div>

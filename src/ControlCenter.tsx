@@ -10,6 +10,7 @@ import fetchLocationPoints, {
 } from "./fetchers/fetch-location-points"
 import subDays from "date-fns/subDays"
 import {format} from "date-fns"
+import RelayStatus from "./RelayStatus"
 
 export interface ControlCenterProps {
 	nostrRelays: string[]
@@ -57,7 +58,11 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 						</Paper>
 					</div>
 					<div>
-						<Paper title="Relays" icon={FaSolidServer}></Paper>
+						<Paper title="Relays" icon={FaSolidServer}>
+							<For each={props.nostrRelays}>
+								{relay => <RelayStatus url={relay} />}
+							</For>
+						</Paper>
 					</div>
 				</section>
 				<div class="basis-6/12 flex items-center flex-col">

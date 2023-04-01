@@ -1,0 +1,64 @@
+{
+  "extends": [
+    "plugin:react/recommended",
+    "plugin:react-i18n/recommended",
+    "plugin:compat/recommended",
+    "prettier"
+  ],
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "jest": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 13,
+    "sourceType": "module"
+  },
+  "plugins": ["react-i18n", "ordered-imports", "react", "@typescript-eslint"],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "compat/compat": "error",
+    "ordered-imports/ordered-imports": [
+      "error",
+      {
+        "symbols-first": true,
+        "declaration-ordering": ["type", {
+          "ordering": ["namespace", "destructured", "default", "side-effect"],
+          "secondaryOrdering": ["name", "lowercase-last"]
+        }],
+        "specifier-ordering": "lowercase-last",
+        "group-ordering": [
+          {
+            "name": "third-party named",
+            "match": "^@",
+            "order": 20
+          },
+          {
+            "name": "project",
+            "match": "^\\~",
+            "order": 30
+          },
+          {
+            "name": "parent directories",
+            "match": "^\\.\\.",
+            "order": 40
+          },
+          {
+            "name": "current directory",
+            "match": "^\\.",
+            "order": 50
+          },
+          {
+            "name": "third-party",
+            "match": ".*",
+            "order": 10
+          }
+        ]
+      }
+    ]
+  }
+}

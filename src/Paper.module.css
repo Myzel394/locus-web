@@ -1,0 +1,6 @@
+.Paper {
+    background: linear-gradient(145deg, #4C4560, #342F42);
+    box-shadow: inset 6.01px 6.01px 22px #2E2A3B, inset -6.01px -6.01px 22px #524A67;
+
+    @apply basis-10/12 rounded-3xl px-6 py-4;
+}

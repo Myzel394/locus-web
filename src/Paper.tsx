@@ -16,7 +16,7 @@ const Paper: Component<PaperProps> = ({title, children, icon: Icon}: PaperProps)
 				<Icon class="text-5xl" />
 			</div>
 			<div class={styles.Paper}>
-				<Text variant="heading-1">{title}</Text>
+				<Text variant="paper-title">{title}</Text>
 				{children}
 			</div>
 		</div>

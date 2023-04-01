@@ -5,3 +5,5 @@ dist
 .vscode
 .idea/*
 .vscode/*
+
+yarn-error.log

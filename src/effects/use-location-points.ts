@@ -30,9 +30,9 @@ export default function useLocationPoints({
 	pgpPublicSignKey: rawPGPPublicSignKey,
 	relays,
 	startDate,
-}: UseLocationPointsData): () => LocationPoint[] {
+}: UseLocationPointsData): [() => LocationPoint[], () => boolean] {
 	let isAddingEvent = false
-	let areEventsDone = false
+	const [areEventsDone, setAreEventsDone] = createSignal<boolean>(false)
 	const [points, setPoints] = createSignal<LocationPoint[]>([])
 
 	const fixPoints = () => {
@@ -93,13 +93,13 @@ export default function useLocationPoints({
 
 			isAddingEvent = false
 
-			if (areEventsDone) {
+			if (areEventsDone()) {
 				fixPoints()
 			}
 		})
 
 		subscription.on("eose", () => {
-			areEventsDone = true
+			setAreEventsDone(true)
 
 			pool.close(relays)
 
@@ -115,5 +115,5 @@ export default function useLocationPoints({
 		}
 	}, [nostrPublicKey, rawPGPPrivateViewKey, rawPGPPublicSignKey, relays, startDate])
 
-	return points
+	return [points, areEventsDone]
 }

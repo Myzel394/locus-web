@@ -10,6 +10,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/haversine": "^1.1.5",
     "@types/leaflet-rotate": "^0.1.1",
     "@types/lodash": "^4.14.192",
     "autoprefixer": "^10.4.14",
@@ -25,7 +26,10 @@
   "dependencies": {
     "@solid-primitives/event-listener": "^2.2.10",
     "@types/leaflet": "^1.9.3",
+    "country-iso": "^2.0.5",
+    "country-iso-3-to-2": "^1.1.1",
     "date-fns": "^2.29.3",
+    "haversine": "^1.1.1",
     "leaflet": "^1.9.3",
     "leaflet-rotate": "^0.2.5",
     "lodash": "^4.17.21",

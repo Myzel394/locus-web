@@ -5,20 +5,17 @@ import * as L from "leaflet"
 import "leaflet-rotate"
 import {createEventListener, makeEventListener} from "@solid-primitives/event-listener"
 import "leaflet-rotate"
-
-export interface LocationMapProps {
-	longitude: number
-	latitude: number
-	accuracy: number
-}
+import {useMap} from "./MapProvider"
+import {LocationPoint} from "./effects/use-location-points"
 
 const ACCESS_TOKEN = "q6KpniImtOG0cV5C3cLMH60wLmU6lfsNafyiwsElrdxeFXhiaNn7j5s6NTFuMApQ"
 
 const calculateRotationDegree = (movementX: number, movementY: number): number =>
 	Math.atan2(movementY, movementX) * (180 / Math.PI)
 
-const LocationMap: Component<LocationMapProps> = (props: LocationMapProps): JSX.Element => {
-	let map: L.Map
+const LocationMap: Component = (): JSX.Element => {
+	const {map, _setMap, setLocationPoint, locationPoint} = useMap()
+
 	let div: HTMLDivElement
 
 	const [isRotating, setIsRotating] = createSignal<boolean>(false)
@@ -64,34 +61,33 @@ const LocationMap: Component<LocationMapProps> = (props: LocationMapProps): JSX.
 	)
 
 	onMount(() => {
-		map = L.map("location-map", {
-			rotate: true,
-		}).setView([props.latitude, props.longitude], 13)
+		_setMap(
+			L.map("location-map", {
+				rotate: true,
+			}).setView(
+				[locationPoint()!.latitude as number, locationPoint()!.longitude as number],
+				16,
+			),
+		)
 
 		L.tileLayer(
 			`https://tile.jawg.io/6f677dd5-098d-4198-849b-adcb87377fc8/{z}/{x}/{y}{r}.png?access-token=${ACCESS_TOKEN}`,
 			{},
-		).addTo(map)
-
-		L.circle([props.latitude, props.longitude], {
-			radius: props.accuracy,
-			color: "#3454C5",
-			fillOpacity: 0.2,
-		}).addTo(map)
+		).addTo(map())
 	})
 
 	createEffect(() => {
-		map.setBearing(degree())
+		map().setBearing(degree())
 	})
 
 	return (
-		<div class="relative w-full aspect-square overflow-hidden select-none">
+		<div class="relative h-full aspect-square overflow-hidden select-none">
 			<img
 				alt=""
 				src={CompassBackgroundSVG}
-				class="absolute top-0 left-0 h-full w-full object-contain z-0 pointer-events-none"
+				class="absolute top-0 left-0 h-full aspect-square object-contain z-0 pointer-events-none"
 			/>
-			<div class="absolute w-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-9 pointer-events-none">
+			<div class="absolute top-0 left-0 h-full aspect-square object-contain z-0 p-1 pointer-events-none">
 				<img
 					alt=""
 					src={CompassNeedlesSVG}
@@ -116,7 +112,7 @@ const LocationMap: Component<LocationMapProps> = (props: LocationMapProps): JSX.
 
 					setStartDegree(calculateRotationDegree(diffX, diffY))
 				}}
-				class="absolute w-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-20 rounded-full"
+				class="absolute h-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-12 rounded-full"
 			>
 				<div
 					onmousedown={(event: MouseEvent) => {
@@ -128,7 +124,7 @@ const LocationMap: Component<LocationMapProps> = (props: LocationMapProps): JSX.
 				/>
 			</div>
 			{/* Stylistic effects */}
-			<div class="absolute w-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-20 pointer-events-none">
+			<div class="absolute h-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-12 rounded-full pointer-events-none">
 				<div
 					class="w-full h-full rounded-full"
 					style={{
@@ -137,7 +133,7 @@ const LocationMap: Component<LocationMapProps> = (props: LocationMapProps): JSX.
 					}}
 				/>
 			</div>
-			<div class="absolute w-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-20 pointer-events-none">
+			<div class="absolute h-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-12 rounded-full pointer-events-none">
 				<div
 					class="w-full h-full rounded-full"
 					style={{
@@ -146,7 +142,7 @@ const LocationMap: Component<LocationMapProps> = (props: LocationMapProps): JSX.
 					}}
 				/>
 			</div>
-			<div class="absolute w-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-20 pointer-events-none">
+			<div class="absolute h-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-12 rounded-full pointer-events-none">
 				<div
 					class="w-full h-full rounded-full"
 					style={{

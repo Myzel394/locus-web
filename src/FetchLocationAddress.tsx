@@ -1,12 +1,12 @@
 import {Component, createResource, JSX} from "solid-js"
+import Text from "./Text"
 
 export interface HFetchLocationAddressProps {
 	longitude: number
 	latitude: number
-	children: (address: () => string) => JSX.Element
 }
 
-const HFetchLocationAddress: Component<HFetchLocationAddressProps> = (
+const FetchLocationAddress: Component<HFetchLocationAddressProps> = (
 	props: HFetchLocationAddressProps,
 ): JSX.Element => {
 	const [address] = createResource(
@@ -24,7 +24,7 @@ const HFetchLocationAddress: Component<HFetchLocationAddressProps> = (
 		},
 	)
 
-	return props.children(address)
+	return <Text variant="body">{address()}</Text>
 }
 
-export default HFetchLocationAddress
+export default FetchLocationAddress

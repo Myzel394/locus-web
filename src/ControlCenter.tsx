@@ -1,15 +1,20 @@
-import {Component, createSignal, For, JSX, Show} from "solid-js"
+import {Component, createEffect, createSignal, For, JSX, Show} from "solid-js"
 import CaveLocationPointsSVG from "./cave-location-points.svg"
 import Text from "./Text"
 import Paper from "./Paper"
-import {FaSolidCircle, FaSolidClock, FaSolidLocationArrow, FaSolidServer} from "solid-icons/fa"
+import {FaSolidLocationArrow, FaSolidServer} from "solid-icons/fa"
 import {HiSolidCloud} from "solid-icons/hi"
 import subDays from "date-fns/subDays"
-import {format} from "date-fns"
 import RelayStatus from "./RelayStatus"
 import useLocationPoints, {LocationPoint} from "./effects/use-location-points"
-import HFetchLocationAddress from "./HFetchLocationAddress"
+import FetchLocationAddress from "./FetchLocationAddress"
 import LocationMap from "./LocationMap"
+import DistanceMeter from "./DistanceMeter"
+import LocationPointInformation from "./LocationPointInformation"
+import {useMap} from "./MapProvider"
+import WorldMap from "./WorldMap"
+import {get as getCountryByCoords} from "country-iso"
+import getCountryISO2 from "country-iso-3-to-2"
 
 export interface ControlCenterProps {
 	nostrRelays: string[]
@@ -19,7 +24,7 @@ export interface ControlCenterProps {
 }
 
 const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps): JSX.Element => {
-	const locationPoints = useLocationPoints({
+	const [locationPoints, allPointsLoaded] = useLocationPoints({
 		relays: props.nostrRelays,
 		pgpPrivateViewKey: props.pgpViewPrivateKey,
 		pgpPublicSignKey: props.pgpSignPublicKey,
@@ -27,6 +32,16 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 		nostrPublicKey: props.nostrPublicKey,
 	})
 	const [showGradient, setShowGradient] = createSignal<boolean>(true)
+	const {locationPoint, setLocationPoint, goToPosition} = useMap()
+
+	createEffect(() => {
+		if (locationPoints().length > 0) {
+			const lastPoint = locationPoints()[locationPoints().length - 1]
+
+			setLocationPoint(lastPoint)
+			goToPosition(lastPoint.latitude, lastPoint.longitude, allPointsLoaded())
+		}
+	})
 
 	return (
 		<div class="relative">
@@ -41,19 +56,23 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 
 			<main class="h-screen justify-center flex flex-row">
 				<section class="basis-3/12 w-full ml-6 flex flex-col gap-y-12 justify-center items-stretch">
+					<div class="w-full">
+						<WorldMap
+							activeCountry={getCountryISO2(
+								getCountryByCoords(
+									locationPoint()?.latitude,
+									locationPoint()?.longitude,
+								),
+							)}
+						/>
+					</div>
 					<div>
 						<Paper title="Location" icon={FaSolidLocationArrow}>
-							<Show<boolean> when={locationPoints().length > 0}>
-								<HFetchLocationAddress
-									longitude={
-										locationPoints()[locationPoints().length - 1].longitude
-									}
-									latitude={
-										locationPoints()[locationPoints().length - 1].latitude
-									}
-								>
-									{address => <Text variant="body">{address()}</Text>}
-								</HFetchLocationAddress>
+							<Show<boolean> when={locationPoint()}>
+								<FetchLocationAddress
+									longitude={locationPoint().longitude}
+									latitude={locationPoint().latitude}
+								/>
 							</Show>
 						</Paper>
 					</div>
@@ -70,14 +89,11 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 						</Paper>
 					</div>
 				</section>
-				<div class="basis-6/12 flex items-center flex-col">
+				<div class="basis-6/12 flex items-center flex-col gap-y-3 py-5">
 					<Text variant="title">LOCUS</Text>
-					<Show<boolean> when={locationPoints().length > 0}>
-						<LocationMap
-							longitude={locationPoints()[0].longitude}
-							latitude={locationPoints()[0].latitude}
-							accuracy={locationPoints()[0].accuracy}
-						/>
+					<Show<boolean> when={locationPoint()}>
+						<LocationMap />
+						<DistanceMeter />
 					</Show>
 				</div>
 				<div class="z-20 basis-3/12 flex flex-col items-end justify-center pr-5">
@@ -98,27 +114,7 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 							<For<LocationPoint[]> each={locationPoints()}>
 								{point => (
 									<li>
-										<Text variant="heading-2">
-											{point.latitude}, {point.longitude}
-										</Text>
-										<div class="flex flex-row gap-x-2">
-											<div class="flex flex-row gap-x-1 items-center">
-												<div class="text-white">
-													<FaSolidClock class="text-xs" />
-												</div>
-												<Text variant="information">
-													{format(point.createdAt, "Pp")}
-												</Text>
-											</div>
-											<div class="flex flex-row gap-x-1 items-center">
-												<div class="text-white">
-													<FaSolidCircle class="text-xs text-white" />
-												</div>
-												<Text variant="information">
-													{point.accuracy.toFixed(0)}
-												</Text>
-											</div>
-										</div>
+										<LocationPointInformation point={point} />
 									</li>
 								)}
 							</For>

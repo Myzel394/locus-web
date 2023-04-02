@@ -9,6 +9,7 @@ import {format} from "date-fns"
 import RelayStatus from "./RelayStatus"
 import useLocationPoints, {LocationPoint} from "./effects/use-location-points"
 import HFetchLocationAddress from "./HFetchLocationAddress"
+import LocationMap from "./LocationMap"
 
 export interface ControlCenterProps {
 	nostrRelays: string[]
@@ -71,6 +72,13 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 				</section>
 				<div class="basis-6/12 flex items-center flex-col">
 					<Text variant="title">LOCUS</Text>
+					<Show<boolean> when={locationPoints().length > 0}>
+						<LocationMap
+							longitude={locationPoints()[0].longitude}
+							latitude={locationPoints()[0].latitude}
+							accuracy={locationPoints()[0].accuracy}
+						/>
+					</Show>
 				</div>
 				<div class="z-20 basis-3/12 flex flex-col items-end justify-center pr-5">
 					<Text variant="heading-1" class="text-right">

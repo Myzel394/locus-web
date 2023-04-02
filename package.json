@@ -22,7 +22,9 @@
     "vite-plugin-solid": "^2.5.0"
   },
   "dependencies": {
+    "@types/leaflet": "^1.9.3",
     "date-fns": "^2.29.3",
+    "leaflet": "^1.9.3",
     "lodash": "^4.17.21",
     "nostr-tools": "^1.8.1",
     "openpgp": "^5.7.0",

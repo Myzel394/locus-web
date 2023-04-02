@@ -549,6 +549,18 @@
     "@noble/hashes" "~1.3.0"
     "@scure/base" "~1.1.0"
 
+"@solid-primitives/event-listener@^2.2.10":
+  version "2.2.10"
+  resolved "https://registry.npmjs.org/@solid-primitives/event-listener/-/event-listener-2.2.10.tgz#0e3de30f02a25a82ed31633d0a65035b0ea0c457"
+  integrity sha512-rWBCeF1NRAmLJtVo2wpY9vF3IAQ8VAxGnFDOUqROSdYhUfiCeM7Hw3PKkGCELwNQzZK1W1z+MjzB7fctpjX4Sg==
+  dependencies:
+    "@solid-primitives/utils" "^6.0.0"
+
+"@solid-primitives/utils@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.npmjs.org/@solid-primitives/utils/-/utils-6.0.0.tgz#157fae6f22d7b341b6eb9af39e5455ecae7079ca"
+  integrity sha512-SSu12+vvU6J8SVWW9eGV+dqiMsc0WG1Oy8YYY9AWzRzssmzNXg/uexaW+0eqTuj8JcRAaGplMDjhraB01HOidA==
+
 "@types/babel__core@^7.1.20":
   version "7.20.0"
   resolved "https://registry.npmjs.org/@types/babel__core/-/babel__core-7.20.0.tgz"
@@ -587,7 +599,14 @@
   resolved "https://registry.npmjs.org/@types/geojson/-/geojson-7946.0.10.tgz#6dfbf5ea17142f7f9a043809f1cd4c448cb68249"
   integrity sha512-Nmh0K3iWQJzniTuPRcJn5hxXkfB1T1pgB89SBig5PlJQU5yocazeu4jATJlaA0GYFKWMqDdvYemoSnF2pXgLVA==
 
-"@types/leaflet@^1.9.3":
+"@types/leaflet-rotate@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/@types/leaflet-rotate/-/leaflet-rotate-0.1.1.tgz#020c489d5d323025fb7d8e41ccb360de229b9dc4"
+  integrity sha512-XRLn47WV/KpiJtIUP/wA4Ymitn9W+tqsCyMFfssE1felrV6DVAKHb1jIL3uOY+ifFl/8O+9ad2JzVDiirJYijQ==
+  dependencies:
+    "@types/leaflet" "*"
+
+"@types/leaflet@*", "@types/leaflet@^1.9.3":
   version "1.9.3"
   resolved "https://registry.npmjs.org/@types/leaflet/-/leaflet-1.9.3.tgz#7aac302189eb3aa283f444316167995df42a5467"
   integrity sha512-Caa1lYOgKVqDkDZVWkto2Z5JtVo09spEaUt2S69LiugbBpoqQu92HYFMGUbYezZbnBkyOxMNPXHSgRrRY5UyIA==
@@ -1313,6 +1332,11 @@ json5@^2.2.2:
   version "2.2.3"
   resolved "https://registry.npmjs.org/json5/-/json5-2.2.3.tgz"
   integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
+
+leaflet-rotate@^0.2.5:
+  version "0.2.5"
+  resolved "https://registry.npmjs.org/leaflet-rotate/-/leaflet-rotate-0.2.5.tgz#c97bd6b44f4c19e009f83f2dd71d271ce0b38b14"
+  integrity sha512-ZGrtAjuTuc3EGbOviCdMrUNfQtOMlfSs6luBt1EMdsO1iSiIpg96+mfcTCdw5Q3edc7zyoxVOWDgd13rV0cCwA==
 
 leaflet@^1.9.3:
   version "1.9.3"

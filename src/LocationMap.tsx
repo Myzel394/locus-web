@@ -1,6 +1,10 @@
-import {Component, createEffect, JSX} from "solid-js"
-import CompassSVG from "./Compass.svg"
+import {Component, createEffect, createSignal, JSX, onMount} from "solid-js"
+import CompassNeedlesSVG from "./compass-needles.svg"
+import CompassBackgroundSVG from "./compass-background.svg"
 import * as L from "leaflet"
+import "leaflet-rotate"
+import {createEventListener, makeEventListener} from "@solid-primitives/event-listener"
+import "leaflet-rotate"
 
 export interface LocationMapProps {
 	longitude: number
@@ -10,9 +14,59 @@ export interface LocationMapProps {
 
 const ACCESS_TOKEN = "q6KpniImtOG0cV5C3cLMH60wLmU6lfsNafyiwsElrdxeFXhiaNn7j5s6NTFuMApQ"
 
+const calculateRotationDegree = (movementX: number, movementY: number): number =>
+	Math.atan2(movementY, movementX) * (180 / Math.PI)
+
 const LocationMap: Component<LocationMapProps> = (props: LocationMapProps): JSX.Element => {
-	createEffect(() => {
-		const map = L.map("location-map").setView([props.latitude, props.longitude], 13)
+	let map: L.Map
+	let div: HTMLDivElement
+
+	const [isRotating, setIsRotating] = createSignal<boolean>(false)
+	const [lastDegree, setLastDegree] = createSignal<number>(0)
+	const [startDegree, setStartDegree] = createSignal<number>(0)
+	const [additionDegree, setAdditionDegree] = createSignal<number>(0)
+	const degree = () => lastDegree() + additionDegree()
+
+	createEventListener(
+		document.body,
+		["mouseleave", "mouseup"],
+		() => {
+			setIsRotating(false)
+			setLastDegree(degree())
+			setAdditionDegree(0)
+		},
+		{
+			passive: true,
+		},
+	)
+
+	createEventListener(
+		document.body,
+		"mousemove",
+		(event: MouseEvent) => {
+			if (!isRotating()) {
+				return
+			}
+
+			const bounds = div.getBoundingClientRect()
+
+			const halfX = bounds.x + bounds.width / 2
+			const halfY = bounds.y + bounds.height / 2
+
+			const diffX = event.clientX - halfX
+			const diffY = event.clientY - halfY
+
+			setAdditionDegree(calculateRotationDegree(diffX, diffY) - startDegree())
+		},
+		{
+			passive: true,
+		},
+	)
+
+	onMount(() => {
+		map = L.map("location-map", {
+			rotate: true,
+		}).setView([props.latitude, props.longitude], 13)
 
 		L.tileLayer(
 			`https://tile.jawg.io/6f677dd5-098d-4198-849b-adcb87377fc8/{z}/{x}/{y}{r}.png?access-token=${ACCESS_TOKEN}`,
@@ -26,15 +80,52 @@ const LocationMap: Component<LocationMapProps> = (props: LocationMapProps): JSX.
 		}).addTo(map)
 	})
 
+	createEffect(() => {
+		map.setBearing(degree())
+	})
+
 	return (
-		<div class="relative w-full aspect-square">
+		<div class="relative w-full aspect-square overflow-hidden select-none">
 			<img
 				alt=""
-				src={CompassSVG}
+				src={CompassBackgroundSVG}
 				class="absolute top-0 left-0 h-full w-full object-contain z-0 pointer-events-none"
 			/>
-			<div class="absolute w-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-20">
-				<div id="location-map" class="bg-locus-background w-full h-full rounded-full" />
+			<div class="absolute w-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-9 pointer-events-none">
+				<img
+					alt=""
+					src={CompassNeedlesSVG}
+					class="w-full h-full"
+					style={{
+						transform: `rotate(${degree()}deg)`,
+					}}
+				/>
+			</div>
+			<div
+				ref={div}
+				onMouseDown={event => {
+					setIsRotating(true)
+
+					const bounds = div.getBoundingClientRect()
+
+					const halfX = bounds.x + bounds.width / 2
+					const halfY = bounds.y + bounds.height / 2
+
+					const diffX = event.clientX - halfX
+					const diffY = event.clientY - halfY
+
+					setStartDegree(calculateRotationDegree(diffX, diffY))
+				}}
+				class="absolute w-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-20 rounded-full"
+			>
+				<div
+					onmousedown={(event: MouseEvent) => {
+						event.stopPropagation()
+						event.preventDefault()
+					}}
+					id="location-map"
+					class="bg-locus-background w-full h-full rounded-full"
+				/>
 			</div>
 			{/* Stylistic effects */}
 			<div class="absolute w-full aspect-square top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-20 pointer-events-none">

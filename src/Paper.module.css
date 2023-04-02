@@ -1,6 +1,15 @@
 .Paper {
     background: linear-gradient(145deg, #4C4560, #342F42);
-    box-shadow: inset 6.01px 6.01px 22px #2E2A3B, inset -6.01px -6.01px 22px #524A67;
+    box-shadow:
+            inset 6.01px 6.01px 22px #2E2A3B,
+            inset -6.01px -6.01px 22px #524A67,
+            inset -4px -4px 6px rgba(255, 255, 255, 0.05),
+            0px 4px 4px rgba(0, 0, 0, 0.25),
+            0px 4px 4px rgba(0, 0, 0, 0.25),
+            36px 69px 31px rgba(0, 0, 0, 0.02),
+            20px 39px 26px rgba(0, 0, 0, 0.08),
+            9px 17px 19px rgba(0, 0, 0, 0.13),
+            inset 4px 4px 11px rgba(0, 0, 0, 0.15);
 
     @apply basis-10/12 rounded-3xl px-6 py-4;
 }

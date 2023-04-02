@@ -13,6 +13,7 @@ import DistanceMeter from "./DistanceMeter"
 import LocationPointInformation from "./LocationPointInformation"
 import {useMap} from "./MapProvider"
 import WorldMap from "./WorldMap"
+import CaveCountryBlobSVG from "./cave-country-blob.svg"
 import {get as getCountryByCoords} from "country-iso"
 import getCountryISO2 from "country-iso-3-to-2"
 
@@ -55,39 +56,54 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 			/>
 
 			<main class="h-screen justify-center flex flex-row">
-				<section class="basis-3/12 w-full ml-6 flex flex-col gap-y-12 justify-center items-stretch">
-					<div class="w-full">
-						<WorldMap
-							activeCountry={getCountryISO2(
-								getCountryByCoords(
-									locationPoint()?.latitude,
-									locationPoint()?.longitude,
-								),
-							)}
+				<section class="basis-3/12 w-full ml-6 flex flex-col justify-between items-stretch">
+					<div class="w-full relative">
+						<img
+							src={CaveCountryBlobSVG}
+							class="absolute left-0 top-0 w-full h-full"
+							style={{
+								"box-shadow":
+									"inset -2px -2px 5px rgba(255, 255, 255, 0.08), inset 4px 2px 5px rgba(0, 0, 0, 0.25)",
+							}}
 						/>
+						<div class="relative w-full h-full left-0 top-0 p-20">
+							<WorldMap
+								activeCountry={getCountryISO2(
+									getCountryByCoords(
+										locationPoint()?.latitude,
+										locationPoint()?.longitude,
+									),
+								)}
+							/>
+						</div>
 					</div>
-					<div>
-						<Paper title="Location" icon={FaSolidLocationArrow}>
-							<Show<boolean> when={locationPoint()}>
-								<FetchLocationAddress
-									longitude={locationPoint().longitude}
-									latitude={locationPoint().latitude}
-								/>
-							</Show>
-						</Paper>
+					<div class="flex flex-col gap-y-12">
+						<div>
+							<Paper title="Location" icon={FaSolidLocationArrow}>
+								<Show<boolean> when={locationPoint()}>
+									<FetchLocationAddress
+										longitude={locationPoint().longitude}
+										latitude={locationPoint().latitude}
+									/>
+								</Show>
+							</Paper>
+						</div>
+						<div>
+							<Paper title="Saved Points" icon={HiSolidCloud}>
+								<Text variant="body">
+									{locationPoints().length} location points
+								</Text>
+							</Paper>
+						</div>
+						<div>
+							<Paper title="Relays" icon={FaSolidServer}>
+								<For<string[]> each={props.nostrRelays}>
+									{relay => <RelayStatus url={relay} />}
+								</For>
+							</Paper>
+						</div>
 					</div>
-					<div>
-						<Paper title="Saved Points" icon={HiSolidCloud}>
-							<Text variant="body">{locationPoints().length} location points</Text>
-						</Paper>
-					</div>
-					<div>
-						<Paper title="Relays" icon={FaSolidServer}>
-							<For<string[]> each={props.nostrRelays}>
-								{relay => <RelayStatus url={relay} />}
-							</For>
-						</Paper>
-					</div>
+					<div />
 				</section>
 				<div class="basis-6/12 flex items-center flex-col gap-y-3 py-5">
 					<Text variant="title">LOCUS</Text>

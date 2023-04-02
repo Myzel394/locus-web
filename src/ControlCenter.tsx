@@ -58,14 +58,7 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 			<main class="h-screen justify-center flex flex-row">
 				<section class="basis-3/12 w-full ml-6 flex flex-col justify-between items-stretch">
 					<div class="w-full relative">
-						<img
-							src={CaveCountryBlobSVG}
-							class="absolute left-0 top-0 w-full h-full"
-							style={{
-								"box-shadow":
-									"inset -2px -2px 5px rgba(255, 255, 255, 0.08), inset 4px 2px 5px rgba(0, 0, 0, 0.25)",
-							}}
-						/>
+						<img src={CaveCountryBlobSVG} class="absolute left-0 top-0 w-full h-full" />
 						<div class="relative w-full h-full left-0 top-0 p-20">
 							<WorldMap
 								activeCountry={getCountryISO2(
@@ -112,12 +105,12 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 						<DistanceMeter />
 					</Show>
 				</div>
-				<div class="z-20 basis-3/12 flex flex-col items-end justify-center pr-5">
-					<Text variant="heading-1" class="text-right">
+				<div class="z-20 basis-3/12 flex flex-col items-end pr-5">
+					<Text variant="heading-1" class="mt-10 text-right">
 						Location Points
 					</Text>
 					<div
-						class="relative h-3/4 overflow-y-scroll"
+						class="relative overflow-y-scroll"
 						onscroll={event => {
 							if (event.currentTarget.scrollTop === 0) {
 								setShowGradient(true)

@@ -8,6 +8,9 @@ export interface MapProviderContextData {
 	locationPoint: () => LocationPoint
 	_setMap: (map: L.Map) => void
 	map: () => L.Map | undefined
+	_setBackgroundMap: (map: L.Map) => void
+	backgroundMap: () => L.Map
+	setRotation: (rotation: number) => void
 }
 
 const MapProviderContext = createContext<MapProviderContextData>()
@@ -17,6 +20,7 @@ const MapProvider: Component = (props: {children: JSX.Element}): JSX.Element => 
 	const [locationPoint, _setLocationPoint] = createSignal<LocationPoint | undefined>(undefined)
 
 	const [map, setMap] = createSignal<L.Map>()
+	const [backgroundMap, setBackgroundMap] = createSignal<L.Map>()
 
 	return (
 		<MapProviderContext.Provider
@@ -26,6 +30,10 @@ const MapProvider: Component = (props: {children: JSX.Element}): JSX.Element => 
 						animate,
 						duration: 1,
 					})
+				},
+				setRotation: (rotation: number) => {
+					map()?.setBearing(rotation)
+					backgroundMap()?.setBearing(rotation)
 				},
 				setLocationPoint: (point: LocationPoint) => {
 					_setLocationPoint(point)
@@ -46,7 +54,9 @@ const MapProvider: Component = (props: {children: JSX.Element}): JSX.Element => 
 				},
 				locationPoint: () => locationPoint()!,
 				_setMap: setMap,
-				map: map,
+				_setBackgroundMap: setBackgroundMap,
+				map: () => map()!,
+				backgroundMap: () => backgroundMap()!,
 			}}
 		>
 			{props.children}

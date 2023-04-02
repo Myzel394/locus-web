@@ -16,6 +16,7 @@ import WorldMap from "./WorldMap"
 import CaveCountryBlobSVG from "./cave-country-blob.svg"
 import {get as getCountryByCoords} from "country-iso"
 import getCountryISO2 from "country-iso-3-to-2"
+import BackgroundMap from "./BackgroundMap"
 
 export interface ControlCenterProps {
 	nostrRelays: string[]
@@ -33,7 +34,7 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 		nostrPublicKey: props.nostrPublicKey,
 	})
 	const [showGradient, setShowGradient] = createSignal<boolean>(true)
-	const {locationPoint, setLocationPoint, goToPosition} = useMap()
+	const {locationPoint, map, setLocationPoint, goToPosition} = useMap()
 
 	createEffect(() => {
 		if (locationPoints().length > 0) {
@@ -46,17 +47,21 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 
 	return (
 		<div class="relative">
+			<Show when={map() && locationPoint()}>
+				<BackgroundMap />
+			</Show>
+
 			<img
 				alt=""
 				src={CaveLocationPointsSVG}
-				class="h-screen right-0 top-0 bottom-0 absolute object-cover z-0"
+				class="h-screen right-0 top-0 bottom-0 absolute object-cover z-10"
 				style={{
 					width: "40rem",
 				}}
 			/>
 
 			<main class="h-screen justify-center flex flex-row">
-				<section class="basis-3/12 w-full ml-6 flex flex-col justify-between items-stretch">
+				<section class="basis-3/12 w-full ml-6 flex flex-col justify-between items-stretch z-20">
 					<div class="w-full relative">
 						<img src={CaveCountryBlobSVG} class="absolute left-0 top-0 w-full h-full" />
 						<div class="relative w-full h-full left-0 top-0 p-20">
@@ -98,14 +103,14 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 					</div>
 					<div />
 				</section>
-				<div class="basis-6/12 flex items-center flex-col gap-y-3 py-5">
+				<div class="basis-6/12 flex items-center flex-col gap-y-3 py-5 z-20">
 					<Text variant="title">LOCUS</Text>
 					<Show<boolean> when={locationPoint()}>
 						<LocationMap />
 						<DistanceMeter />
 					</Show>
 				</div>
-				<div class="z-20 basis-3/12 flex flex-col items-end pr-5">
+				<div class="z-20 basis-3/12 flex flex-col items-end pr-5 z-20">
 					<Text variant="heading-1" class="mt-10 text-right">
 						Location Points
 					</Text>

@@ -3,18 +3,15 @@ import CompassNeedlesSVG from "./compass-needles.svg"
 import CompassBackgroundSVG from "./compass-background.svg"
 import * as L from "leaflet"
 import "leaflet-rotate"
-import {createEventListener, makeEventListener} from "@solid-primitives/event-listener"
-import "leaflet-rotate"
+import {createEventListener} from "@solid-primitives/event-listener"
 import {useMap} from "./MapProvider"
-import {LocationPoint} from "./effects/use-location-points"
-
-const ACCESS_TOKEN = "q6KpniImtOG0cV5C3cLMH60wLmU6lfsNafyiwsElrdxeFXhiaNn7j5s6NTFuMApQ"
+import {ACCESS_TOKEN} from "./constants"
 
 const calculateRotationDegree = (movementX: number, movementY: number): number =>
 	Math.atan2(movementY, movementX) * (180 / Math.PI)
 
 const LocationMap: Component = (): JSX.Element => {
-	const {map, _setMap, setLocationPoint, locationPoint} = useMap()
+	const {map, _setMap, setLocationPoint, setRotation, locationPoint} = useMap()
 
 	let div: HTMLDivElement
 
@@ -77,7 +74,7 @@ const LocationMap: Component = (): JSX.Element => {
 	})
 
 	createEffect(() => {
-		map().setBearing(degree())
+		setRotation(degree())
 	})
 
 	return (

@@ -19,7 +19,7 @@ const LocationPointInformation: Component<LocationPointInformationProps> = (
 			class="hover:bg-white hover:bg-opacity-10 rounded-xl duration-50 px-5 py-2"
 			onclick={() => {
 				setLocationPoint(props.point)
-				goToPosition(props.point.latitude, props.point.longitude, allPointsLoaded())
+				goToPosition(props.point.latitude, props.point.longitude, true)
 			}}
 		>
 			<Text variant="heading-2">

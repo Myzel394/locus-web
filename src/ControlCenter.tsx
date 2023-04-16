@@ -17,6 +17,7 @@ import CaveCountryBlobSVG from "./cave-country-blob.svg"
 import {get as getCountryByCoords} from "country-iso"
 import getCountryISO2 from "country-iso-3-to-2"
 import BackgroundMap from "./BackgroundMap"
+import BatteryStatus from "./BatteryStatus"
 
 export interface ControlCenterProps {
 	nostrRelays: string[]
@@ -108,6 +109,9 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 					<Show<boolean> when={locationPoint()}>
 						<LocationMap />
 						<DistanceMeter />
+						<Show<boolean> when={locationPoint().batteryLevel}>
+							<BatteryStatus />
+						</Show>
 					</Show>
 				</div>
 				<div class="z-20 basis-3/12 flex flex-col items-end pr-5 z-20">

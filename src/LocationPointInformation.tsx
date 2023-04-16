@@ -14,6 +14,8 @@ const LocationPointInformation: Component<LocationPointInformationProps> = (
 ): JSX.Element => {
 	const {goToPosition, setLocationPoint} = useMap()
 
+	console.log(props.point)
+
 	return (
 		<button
 			class="hover:bg-white hover:bg-opacity-10 rounded-xl duration-50 px-5 py-2"

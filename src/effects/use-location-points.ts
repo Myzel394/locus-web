@@ -22,6 +22,8 @@ export interface LocationPoint {
 	speedAccuracy?: number
 	heading?: number
 	headingAccuracy?: number
+	batteryLevel?: number
+	batteryState?: "full" | "charging" | "discharging" | "unknown"
 }
 
 export default function useLocationPoints({

@@ -42,8 +42,11 @@ export default function useLocationPoints({
 	}
 
 	createEffect(async () => {
+		console.info("Reading private key")
 		const pgpPrivateViewKey = await OpenPGP.readPrivateKey({armoredKey: rawPGPPrivateViewKey})
+		console.info("Reading public key")
 		const pgpPublicSignKey = await OpenPGP.readKey({armoredKey: rawPGPPublicSignKey})
+		console.info("Done!")
 
 		const pool = new SimplePool()
 

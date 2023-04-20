@@ -18,19 +18,15 @@ import {get as getCountryByCoords} from "country-iso"
 import getCountryISO2 from "country-iso-3-to-2"
 import BackgroundMap from "./BackgroundMap"
 import BatteryStatus from "./BatteryStatus"
+import {Credentials} from "./types"
 
-export interface ControlCenterProps {
-	nostrRelays: string[]
-	nostrPublicKey: string
-	pgpViewPrivateKey: string
-	pgpSignPublicKey: string
-}
+export type ControlCenterProps = Credentials
 
 const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps): JSX.Element => {
 	const [locationPoints, allPointsLoaded] = useLocationPoints({
 		relays: props.nostrRelays,
-		pgpPrivateViewKey: props.pgpViewPrivateKey,
-		pgpPublicSignKey: props.pgpSignPublicKey,
+		pgpPrivateViewKey: props.viewPrivateKey,
+		pgpPublicSignKey: props.signPublicKey,
 		startDate: subDays(new Date(), 7),
 		nostrPublicKey: props.nostrPublicKey,
 	})

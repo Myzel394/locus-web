@@ -1,11 +1,29 @@
 import "./index.css"
-import {createSignal, Show} from "solid-js"
+import {createSignal, Show, createResource, onMount} from "solid-js"
 import ControlCenter from "./ControlCenter"
 import MapProvider from "./MapProvider"
+import fetchKeyFromLink from "./utils/fetch-key-from-link"
 
 function App() {
 	const [credentials, setCredentials] = createSignal(null)
 	const [field, setField] = createSignal(null)
+
+	onMount(async () => {
+		const fragment = new URL(document.location).hash.slice(1)
+
+		// Check if url has a fragment
+		if (fragment) {
+			const fetchedCredentials = await fetchKeyFromLink(fragment)
+
+			window.location.replace("#")
+
+			// slice off the remaining '#' in HTML5:
+			if (typeof window.history.replaceState == "function") {
+				history.replaceState({}, "", window.location.href.slice(0, -1))
+			}
+			setCredentials(fetchedCredentials)
+		}
+	})
 
 	return (
 		<MapProvider>
@@ -30,10 +48,10 @@ function App() {
 				}
 			>
 				<ControlCenter
-					pgpSignPublicKey={credentials().signPublicKey}
-					pgpViewPrivateKey={credentials().viewPrivateKey}
+					signPublicKey={credentials().signPublicKey}
+					viewPrivateKey={credentials().viewPrivateKey}
 					nostrPublicKey={credentials().nostrPublicKey}
-					nostrRelays={["wss://relay.damus.io"]}
+					nostrRelays={credentials().relays}
 				/>
 			</Show>
 		</MapProvider>

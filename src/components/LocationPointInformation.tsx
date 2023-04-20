@@ -1,4 +1,4 @@
-import {LocationPoint} from "./effects/use-location-points"
+import {LocationPoint} from "../effects/use-location-points"
 import {Component, JSX} from "solid-js"
 import {format} from "date-fns"
 import {useMap} from "./MapProvider"

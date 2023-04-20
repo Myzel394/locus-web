@@ -2,7 +2,7 @@ import * as L from "leaflet"
 import {Component, createEffect, JSX, onCleanup, onMount} from "solid-js"
 import "leaflet-rotate"
 import {useMap} from "./MapProvider"
-import {ACCESS_TOKEN} from "./constants"
+import {ACCESS_TOKEN} from "../constants"
 
 const BackgroundMap: Component = (): JSX.Element => {
 	const {map, locationPoint, backgroundMap, _setBackgroundMap} = useMap()

@@ -1,7 +1,7 @@
 import "./index.css"
 import {createSignal, Show, createResource, onMount} from "solid-js"
-import ControlCenter from "./ControlCenter"
-import MapProvider from "./MapProvider"
+import ControlCenter from "./components/ControlCenter"
+import MapProvider from "./components/MapProvider"
 import fetchKeyFromLink from "./utils/fetch-key-from-link"
 
 function App() {

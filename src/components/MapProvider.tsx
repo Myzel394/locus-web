@@ -1,6 +1,6 @@
 import {Component, createContext, createSignal, JSX, useContext} from "solid-js"
 import * as L from "leaflet"
-import {LocationPoint} from "./effects/use-location-points"
+import {LocationPoint} from "../effects/use-location-points"
 
 export interface MapProviderContextData {
 	goToPosition: (latitude: number, longitude: number, animate: boolean) => void

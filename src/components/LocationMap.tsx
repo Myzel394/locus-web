@@ -1,11 +1,11 @@
 import {Component, createEffect, createSignal, JSX, onMount} from "solid-js"
-import CompassNeedlesSVG from "./compass-needles.svg"
-import CompassBackgroundSVG from "./compass-background.svg"
+import CompassNeedlesSVG from "../assets/compass-needles.svg"
+import CompassBackgroundSVG from "../assets/compass-background.svg"
 import * as L from "leaflet"
 import "leaflet-rotate"
 import {createEventListener} from "@solid-primitives/event-listener"
 import {useMap} from "./MapProvider"
-import {ACCESS_TOKEN} from "./constants"
+import {ACCESS_TOKEN} from "../constants"
 
 const calculateRotationDegree = (movementX: number, movementY: number): number =>
 	Math.atan2(movementY, movementX) * (180 / Math.PI)

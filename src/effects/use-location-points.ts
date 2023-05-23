@@ -1,14 +1,10 @@
 import {createEffect, createSignal} from "solid-js"
-import * as OpenPGP from "openpgp"
 import {SimplePool} from "nostr-tools"
 import sortBy from "lodash/sortBy"
 import reverse from "lodash/reverse"
+import {DecryptionCredentials} from "../utils/get-decryption-key-from-nostr"
 
-export interface UseLocationPointsData {
-	nostrPublicKey: string
-	pgpPrivateViewKey: string
-	pgpPublicSignKey: string
-	relays: string[]
+export type UseLocationPointsData = DecryptionCredentials & {
 	startDate: Date
 }
 
@@ -28,8 +24,7 @@ export interface LocationPoint {
 
 export default function useLocationPoints({
 	nostrPublicKey,
-	pgpPrivateViewKey: rawPGPPrivateViewKey,
-	pgpPublicSignKey: rawPGPPublicSignKey,
+	encryptionPassword,
 	relays,
 	startDate,
 }: UseLocationPointsData): [() => LocationPoint[], () => boolean] {
@@ -42,12 +37,6 @@ export default function useLocationPoints({
 	}
 
 	createEffect(async () => {
-		console.info("Reading private key")
-		const pgpPrivateViewKey = await OpenPGP.readPrivateKey({armoredKey: rawPGPPrivateViewKey})
-		console.info("Reading public key")
-		const pgpPublicSignKey = await OpenPGP.readKey({armoredKey: rawPGPPublicSignKey})
-		console.info("Done!")
-
 		const pool = new SimplePool()
 
 		const subscription = pool.sub(relays, [
@@ -59,48 +48,7 @@ export default function useLocationPoints({
 		])
 
 		subscription.on("event", async rawEvent => {
-			isAddingEvent = true
-
-			const {data: decryptedData} = await OpenPGP.decrypt({
-				message: await OpenPGP.readMessage({armoredMessage: rawEvent.content}),
-				decryptionKeys: pgpPrivateViewKey,
-			})
-
-			if (typeof decryptedData !== "string") {
-				return
-			}
-
-			const message = JSON.parse(decryptedData)
-
-			const signatureResult = await OpenPGP.verify({
-				message: await OpenPGP.createMessage({
-					text: message.message,
-				}),
-				signature: await OpenPGP.readSignature({
-					armoredSignature: message.signature,
-				}),
-				verificationKeys: pgpPublicSignKey,
-			})
-
-			if (!signatureResult.signatures[0].verified) {
-				return
-			}
-
-			const locationPoint = JSON.parse(message.message)
-
-			setPoints([
-				...points(),
-				{
-					...locationPoint,
-					createdAt: new Date(locationPoint.createdAt),
-				},
-			])
-
-			isAddingEvent = false
-
-			if (areEventsDone()) {
-				fixPoints()
-			}
+			console.log(rawEvent)
 		})
 
 		subscription.on("eose", () => {
@@ -118,7 +66,7 @@ export default function useLocationPoints({
 		return () => {
 			pool.close(relays)
 		}
-	}, [nostrPublicKey, rawPGPPrivateViewKey, rawPGPPublicSignKey, relays, startDate])
+	}, [nostrPublicKey, relays, startDate])
 
 	return [points, areEventsDone]
 }

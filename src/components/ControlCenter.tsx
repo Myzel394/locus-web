@@ -18,15 +18,14 @@ import {get as getCountryByCoords} from "country-iso"
 import getCountryISO2 from "country-iso-3-to-2"
 import BackgroundMap from "./BackgroundMap"
 import BatteryStatus from "./BatteryStatus"
-import {Credentials} from "../types"
+import {DecryptionCredentials} from "../utils/get-decryption-key-from-nostr"
 
-export type ControlCenterProps = Credentials
+export type ControlCenterProps = DecryptionCredentials
 
 const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps): JSX.Element => {
 	const [locationPoints, allPointsLoaded] = useLocationPoints({
-		relays: props.nostrRelays,
-		pgpPrivateViewKey: props.viewPrivateKey,
-		pgpPublicSignKey: props.signPublicKey,
+		relays: props.relays,
+		encryptionPassword: props.encryptionPassword,
 		startDate: subDays(new Date(), 7),
 		nostrPublicKey: props.nostrPublicKey,
 	})
@@ -92,7 +91,7 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 						</div>
 						<div>
 							<Paper title="Relays" icon={FaSolidServer}>
-								<For<string[]> each={props.nostrRelays}>
+								<For<string[]> each={props.relays}>
 									{relay => <RelayStatus url={relay} />}
 								</For>
 							</Paper>

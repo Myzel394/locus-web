@@ -33,7 +33,6 @@ export default function fetchKeyFromLink(fragment: string): Promise<Credentials>
 
 			const subscription = relay.sub([
 				{
-					authors: [nostrPublicKey],
 					ids: [nostrMessageID],
 				},
 			])
@@ -54,7 +53,6 @@ export default function fetchKeyFromLink(fragment: string): Promise<Credentials>
 				const message = rawMessage.substring(0, rawMessage.lastIndexOf("}") + 1)
 
 				const rawCredentials = JSON.parse(message) as Credentials
-				console.log(rawCredentials)
 				const credentials = {
 					...rawCredentials,
 					signPublicKey: rawCredentials.signPublicKey.replaceAll("\\n", "\n"),

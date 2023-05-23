@@ -3,6 +3,7 @@ import {SimplePool} from "nostr-tools"
 import sortBy from "lodash/sortBy"
 import reverse from "lodash/reverse"
 import {DecryptionCredentials} from "../utils/get-decryption-key-from-nostr"
+import AES from "aes-js"
 
 export type UseLocationPointsData = DecryptionCredentials & {
 	startDate: Date
@@ -48,7 +49,35 @@ export default function useLocationPoints({
 		])
 
 		subscription.on("event", async rawEvent => {
-			console.log(rawEvent)
+			isAddingEvent = true
+
+			console.info("New event received")
+			const publicData = JSON.parse(rawEvent.content)
+			const initialVector = Uint8Array.from(publicData[0])
+			const cipherText = new Uint8Array(publicData[1])
+
+			const algorithm = new AES.ModeOfOperation.cbc(encryptionPassword, initialVector)
+			const result = algorithm.decrypt(cipherText)
+			console.info("Decryption successful!")
+
+			const rawMessage = AES.utils.utf8.fromBytes(result)
+			// Because of padding there might be some garbage at the end of the message, so we need to trim it.
+			const lastBraceIndex = rawMessage.lastIndexOf("}")
+			const message = JSON.parse(rawMessage.substring(0, lastBraceIndex + 1)) as LocationPoint
+
+			setPoints([
+				...points(),
+				{
+					...message,
+					createdAt: new Date(message.createdAt),
+				},
+			])
+
+			isAddingEvent = false
+
+			if (areEventsDone()) {
+				fixPoints()
+			}
 		})
 
 		subscription.on("eose", () => {

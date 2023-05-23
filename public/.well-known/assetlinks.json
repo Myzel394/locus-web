@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.myzel394.locus",
+      "sha256_cert_fingerprints":
+      [
+        "AB:0E:3E:D8:3B:CF:B1:DE:4A:FA:53:B9:BE:F8:5F:BE:6F:1D:24:BC:31:0E:42:D0:F3:BE:33:6B:47:FF:A0:16"
+      ]
+    }
+  }
+]

@@ -1,13 +1,13 @@
 {
   "headers": [
     {
-      "source": "\/.well-known\/assetlinks.json",
+      "source": "/.well-known/assetlinks.json",
       "headers": [
         {
           "key": "Content-Type",
-          "value": "application/json",
-        },
-      ],
-    },
-  ],
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
 }

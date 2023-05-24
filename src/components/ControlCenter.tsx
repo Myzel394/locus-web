@@ -60,16 +60,11 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 				<section class="basis-3/12 w-full ml-6 flex flex-col justify-between items-stretch z-20">
 					<div class="w-full relative">
 						<img src={CaveCountryBlobSVG} class="absolute left-0 top-0 w-full h-full" />
-						<div class="relative w-full h-full left-0 top-0 p-20">
-							<WorldMap
-								activeCountry={getCountryISO2(
-									getCountryByCoords(
-										locationPoint()?.latitude,
-										locationPoint()?.longitude,
-									),
-								)}
-							/>
-						</div>
+						<Show<boolean> when={locationPoint()}>
+							<div class="relative w-full h-full left-0 top-0 p-20">
+								<WorldMap />
+							</div>
+						</Show>
 					</div>
 					<div class="flex flex-col gap-y-12">
 						<div>
@@ -82,66 +77,9 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 								</Show>
 							</Paper>
 						</div>
-						<div>
-							<Paper title="Saved Points" icon={HiSolidCloud}>
-								<Text variant="body">
-									{locationPoints().length} location points
-								</Text>
-							</Paper>
-						</div>
-						<div>
-							<Paper title="Relays" icon={FaSolidServer}>
-								<For<string[]> each={props.relays}>
-									{relay => <RelayStatus url={relay} />}
-								</For>
-							</Paper>
-						</div>
 					</div>
 					<div />
 				</section>
-				<div class="basis-6/12 flex items-center flex-col gap-y-3 py-5 z-20">
-					<Text variant="title">LOCUS</Text>
-					<Show<boolean> when={locationPoint()}>
-						<LocationMap />
-						<DistanceMeter />
-						<Show<boolean> when={locationPoint().batteryLevel}>
-							<BatteryStatus />
-						</Show>
-					</Show>
-				</div>
-				<div class="z-20 basis-3/12 flex flex-col items-end pr-5 z-20">
-					<Text variant="heading-1" class="mt-10 text-right">
-						Location Points
-					</Text>
-					<div
-						class="relative overflow-y-scroll"
-						onscroll={event => {
-							if (event.currentTarget.scrollTop === 0) {
-								setShowGradient(true)
-							} else {
-								setShowGradient(false)
-							}
-						}}
-					>
-						<ul class="flex flex-col gap-y-6">
-							<For<LocationPoint[]> each={locationPoints()}>
-								{point => (
-									<li>
-										<LocationPointInformation point={point} />
-									</li>
-								)}
-							</For>
-						</ul>
-						<div
-							class="absolute pointer-events-none bg-gradient-to-b from-transparent to-locus-cave left-0 right-0 bottom-0 top-0"
-							style={{
-								opacity: showGradient() ? 1 : 0,
-								transition: showGradient() ? "opacity 0.3s 0.7s" : "opacity 0.1s",
-								willChange: "opacity",
-							}}
-						/>
-					</div>
-				</div>
 			</main>
 		</div>
 	)

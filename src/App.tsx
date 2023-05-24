@@ -14,21 +14,6 @@ function App() {
 
 	createEffect(async () => {
 		const fragment = new URL(document.location.href).hash.slice(1)
-
-		// Check if url has a fragment
-		if (fragment) {
-			const linkData = parseLink(fragment)
-			const fetchedCredentials = await getDecryptionKeyFromNostr(linkData)
-
-			window.location.replace("#")
-
-			// slice off the remaining '#' in HTML5:
-			if (typeof window.history.replaceState == "function") {
-				history.replaceState({}, "", window.location.href.slice(0, -1))
-			}
-
-			setCredentials(fetchedCredentials)
-		}
 	})
 
 	return (

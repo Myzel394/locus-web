@@ -8,6 +8,7 @@ import getDecryptionKeyFromNostr, {
 } from "./utils/get-decryption-key-from-nostr"
 import parseLink from "./utils/parse-link"
 
+
 function App() {
 	const [credentials, setCredentials] = createSignal<DecryptionCredentials | null>(null)
 	const [field, setField] = createSignal(null)

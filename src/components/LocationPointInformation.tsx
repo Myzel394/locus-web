@@ -14,8 +14,6 @@ const LocationPointInformation: Component<LocationPointInformationProps> = (
 ): JSX.Element => {
 	const {goToPosition, setLocationPoint} = useMap()
 
-	console.log(props.point)
-
 	return (
 		<button
 			class="hover:bg-white hover:bg-opacity-10 rounded-xl duration-50 px-5 py-2"
@@ -25,7 +23,7 @@ const LocationPointInformation: Component<LocationPointInformationProps> = (
 			}}
 		>
 			<Text variant="heading-2">
-				{props.point.latitude}, {props.point.longitude}
+				{props.point.latitude.toFixed(2)}, {props.point.longitude.toFixed(2)}
 			</Text>
 			<div class="flex flex-row gap-x-2">
 				<div class="flex flex-row gap-x-1 items-center">

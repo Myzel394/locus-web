@@ -20,7 +20,7 @@ const FetchLocationAddress: Component<HFetchLocationAddressProps> = (
 			return data.display_name
 		},
 		{
-			initialValue: `${props.latitude}, ${props.longitude}`,
+			initialValue: `${props.latitude.toFixed(2)}, ${props.longitude.toFixed(2)}`,
 		},
 	)
 

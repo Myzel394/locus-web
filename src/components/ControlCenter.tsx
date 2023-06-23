@@ -54,7 +54,7 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 				}}
 			/>
 
-			<main class="h-screen justify-center flex flex-row">
+			<main class="h-screen justify-center flex flex-row overflow-hidden">
 				<section class="basis-3/12 w-full ml-6 flex flex-col justify-between items-stretch z-20">
 					<div class="w-full relative">
 						<img src={CaveCountryBlobSVG} class="absolute left-0 top-0 w-full h-full" />
@@ -83,7 +83,7 @@ const ControlCenter: Component<ControlCenterProps> = (props: ControlCenterProps)
 							</Paper>
 						</div>
 						<div>
-							<Paper title="Relays" icon={FaSolidServer}>
+							<Paper title="Relays" icon={FaSolidServer} class="overflow-y-scroll">
 								<For<string[]> each={props.relays}>
 									{relay => <RelayStatus url={relay} />}
 								</For>

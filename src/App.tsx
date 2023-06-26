@@ -8,7 +8,6 @@ import getDecryptionKeyFromNostr, {
 } from "./utils/get-decryption-key-from-nostr"
 import parseLink from "./utils/parse-link"
 
-
 function App() {
 	const [credentials, setCredentials] = createSignal<DecryptionCredentials | null>(null)
 	const [field, setField] = createSignal(null)
@@ -18,17 +17,25 @@ function App() {
 
 		// Check if url has a fragment
 		if (fragment) {
-			const linkData = parseLink(fragment)
-			const fetchedCredentials = await getDecryptionKeyFromNostr(linkData)
+			try {
+				const linkData = parseLink(fragment)
+				const fetchedCredentials = await getDecryptionKeyFromNostr(linkData)
 
-			window.location.replace("#")
+				window.location.replace("#")
 
-			// slice off the remaining '#' in HTML5:
-			if (typeof window.history.replaceState == "function") {
-				history.replaceState({}, "", window.location.href.slice(0, -1))
+				// slice off the remaining '#' in HTML5:
+				if (typeof window.history.replaceState == "function") {
+					history.replaceState({}, "", window.location.href.slice(0, -1))
+				}
+
+				setCredentials(fetchedCredentials)
+			} catch (error) {
+				console.error(error)
+
+				alert(
+					"We are sorry, but the link seems to be invalid. This is most likely due to the Nostr relays not saving the link properly. Please ask the sender to use different relays. There is nothing we can do about this.",
+				)
 			}
-
-			setCredentials(fetchedCredentials)
 		}
 	})
 

@@ -8,15 +8,14 @@ export interface DecryptionCredentials {
 	nostrPublicKey: string
 }
 
-export default function getDecryptionKeyFromNostr({
-	relay: relayURL,
-	nostrPublicKey,
-	nostrMessageID,
-	encryptionPassword,
-}: ParseLinkData): Promise<DecryptionCredentials> {
-	return new Promise<DecryptionCredentials>(async resolve => {
+const getDecryptionKeyFromRelay = async (
+	url: string,
+	encryptionPassword: Uint8Array,
+	nostrMessageID: string,
+): Promise<string> => {
+	return new Promise<string>(async resolve => {
 		console.info("Fetching decryption key from Nostr...")
-		const relay = relayInit(relayURL)
+		const relay = relayInit(url)
 
 		try {
 			console.info("Connecting to Nostr...")
@@ -69,4 +68,21 @@ export default function getDecryptionKeyFromNostr({
 			console.error(error)
 		}
 	})
+}
+
+const ensureIsArray = <T>(value: T | T[]): T[] => {
+	return Array.isArray(value) ? value : [value]
+}
+
+export default function getDecryptionKeyFromNostr({
+	relays: rawRelays,
+	nostrMessageID,
+	encryptionPassword,
+}: ParseLinkData): Promise<DecryptionCredentials> {
+	// For backwards compatibility
+	const relays = ensureIsArray(rawRelays)
+
+	return Promise.any(
+		relays.map(relay => getDecryptionKeyFromRelay(relay, encryptionPassword, nostrMessageID)),
+	)
 }

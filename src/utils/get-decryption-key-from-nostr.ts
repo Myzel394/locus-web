@@ -46,7 +46,12 @@ const getDecryptionKeyFromRelay = async (
 					console.info("Decryption successful!")
 
 					const rawMessage = AES.utils.utf8.fromBytes(result)
-					const message = JSON.parse(rawMessage)
+					// Because of padding there might be some garbage at the end of the message, so we need to trim it.
+					const rawMessageNormalized = rawMessage.substring(
+						0,
+						rawMessage.indexOf("}") + 1,
+					)
+					const message = JSON.parse(rawMessageNormalized)
 
 					resolve({
 						encryptionPassword: Uint8Array.from(message["encryptionPassword"]),
